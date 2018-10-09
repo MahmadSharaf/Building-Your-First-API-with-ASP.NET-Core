@@ -5,13 +5,21 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CityInfo.API.Controllers
-{   
+{
     [Route("api/cities")] // This makes all resources consumed by starting with API. and allresources in this controller start with /cities 
     public class CitiesController : Controller
     {
-        [HttpGet()] //The routing template. This can connects a request with that url with this block
+        [HttpGet("{id}")] //The routing template. This can connects a request with that url with this block
+        public JsonResult GetCity(int id)
+        {
+            return new JsonResult(CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id));
+        }
         public JsonResult GetCities()//This returns a JSONified version of whaterever is passed into the constructor
         {
+            return new JsonResult(CitiesDataStore.Current.Cities);
+                                                  
+
+            /*
             List<object> l = new List<object>
             // This creates a list of objects object is a reference data type. It is an alias for System.Object class
               // The object types can be assigned values of any other types, value types, reference types, 
@@ -24,7 +32,7 @@ namespace CityInfo.API.Controllers
             JsonResult result = new JsonResult(l);
             return result;
 
-            /* // The above block can be summarized as follows
+             // The above block can be summarized as follows
              *
             return new JsonResult(new List<object>
                 {
