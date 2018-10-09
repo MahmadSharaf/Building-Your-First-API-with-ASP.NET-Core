@@ -5,10 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CityInfo.API.Controllers
-{
+{   
+    [Route("api/cities")] // This makes all resources consumed by starting with API. and allresources in this controller start with /cities 
     public class CitiesController : Controller
     {
-        [HttpGet("api/cities")] //The routing template. This can connects a request with that url with this block
+        [HttpGet()] //The routing template. This can connects a request with that url with this block
         public JsonResult GetCities()//This returns a JSONified version of whaterever is passed into the constructor
         {
             List<object> l = new List<object>
