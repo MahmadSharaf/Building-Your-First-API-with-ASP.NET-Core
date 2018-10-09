@@ -35,6 +35,8 @@ namespace CityInfo.API
                 app.UseDeveloperExceptionPage(); //This catches exceptions then handles the requests over to MVC, in such that,
             }                                    // it returns the correct response when an exception happens in the MVC-related code
 
+            app.UseStatusCodePages(); //To show the status code as a text on the web page
+
             // After exceptions are handled
             app.UseMvc(); // This requests pipelines
 

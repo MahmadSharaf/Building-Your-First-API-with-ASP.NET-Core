@@ -8,15 +8,22 @@ namespace CityInfo.API.Controllers
 {
     [Route("api/cities")] // This makes all resources consumed by starting with API. and allresources in this controller start with /cities 
     public class CitiesController : Controller
-    {
+    {//This class is a Cities controller class responsible for routing URLs with the corresponding codes
         [HttpGet("{id}")] //The routing template. This can connects a request with that url with this block
-        public JsonResult GetCity(int id)
-        {
-            return new JsonResult(CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id));
+        public IActionResult GetCity(int id)
+        {   //This method fetchs the related data to the Id number that is requested 
+            var cityToReturn = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id);
+            // This creates a variable of City Id requested by using lambda expression
+            if (cityToReturn == null)
+            {// If no data related to the requested city Id number
+                return NotFound(); // 404 status code returns
+            }
+            return Ok(cityToReturn);
         }
-        public JsonResult GetCities()//This returns a JSONified version of whaterever is passed into the constructor
+
+        public IActionResult GetCities()//This returns a JSONified version of whaterever is passed into the constructor
         {
-            return new JsonResult(CitiesDataStore.Current.Cities);
+            return Ok(CitiesDataStore.Current.Cities);
                                                   
 
             /*
