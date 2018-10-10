@@ -1,7 +1,9 @@
 ﻿using CityInfo.API.Models;
+using CityInfo.API.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +14,39 @@ namespace CityInfo.API.Controllers
     public class PointsOfInterestsController : Controller
     {//This class is a Points Of Interests controller class which is responsible for routing URLs with the corresponding codes
 
+        private ILogger<PointsOfInterestsController> _logger;
+        private IMailService _mailService; // Setting the instance
+
+        public PointsOfInterestsController(ILogger<PointsOfInterestsController> logger,
+            IMailService mailService)
+        {
+            _mailService = mailService; // inject instance in the constructor
+            _logger = logger;
+        }
+
         [HttpGet("{cityId}/pointsofinterest")]
         public IActionResult GetPointsOfInterest(int cityId)
         {
-            var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
-            if (city == null)
+            try
             {
-                return NotFound();
+               // throw new Exception("Exception sample");
+
+                var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+                if (city == null)
+                {
+                    
+                    _logger.LogInformation($"City with id {cityId} could't be found when accessing points of interest.");
+                    return NotFound();
+                }
+                return Ok(city.PointsOfInterest);
             }
-            return Ok(city.PointsOfInterest);
+            catch (Exception ex)
+            {
+
+                _logger.LogCritical($"Exception while getting points of interest for city with id {cityId}.", ex);
+                return StatusCode(500, "City Id is not correct.");
+            }
+           
         }
 
         [HttpGet("{cityId}/pointsofinterest/{id}")]
@@ -28,7 +54,7 @@ namespace CityInfo.API.Controllers
         {
             var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
             if (city == null)
-            {
+            {                
                 return NotFound();
             }
 
@@ -201,6 +227,9 @@ namespace CityInfo.API.Controllers
             }
 
             city.PointsOfInterest.Remove(pointOfInterestFromStore);
+
+            _mailService.Send("Point of interest deleted.",
+                $"Point of interest {pointOfInterestFromStore.Name} with id {pointOfInterestFromStore.Id} was deleted.");
 
             return NoContent();
         }
