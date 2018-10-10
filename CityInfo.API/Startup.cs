@@ -20,7 +20,8 @@ namespace CityInfo.API
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath) //That refers to content root of our environment
-                .AddJsonFile("appSettings.json", optional:false, reloadOnChange:true);  //Adds json file
+                .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true) //Adds json file
+                .AddJsonFile($"appSettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);  //Adds json file
 
             Configuration = builder.Build(); //Create configuration and store it in Configuration variable
         }
