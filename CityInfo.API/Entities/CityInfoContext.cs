@@ -11,7 +11,8 @@ namespace CityInfo.API.Entities
         public CityInfoContext(DbContextOptions<CityInfoContext> options)
             :base(options)
         {
-            Database.EnsureCreated(); // This call insures the DB created effictively
+            Database.Migrate();
+            //Database.EnsureCreated(); // This call insures the DB created effictively
         }
     
         public DbSet<City> Cities { get; set; }
