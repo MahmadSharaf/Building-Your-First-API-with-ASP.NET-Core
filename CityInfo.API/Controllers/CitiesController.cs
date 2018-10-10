@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace CityInfo.API.Controllers
 {
-    [Route("api/cities")] // This makes all resources consumed by starting with API. and allresources in this controller start with /cities 
+    [Route("api/cities")] // This makes all resources consumed by starting with API. and all resources in this controller start with /cities 
     public class CitiesController : Controller
     {//This class is a Cities controller class responsible for routing URLs with the corresponding codes
-        [HttpGet("{id}")] //The routing template. This can connects a request with that url with this block
+
+        [HttpGet("{id}")] //The routing template. This can connects a request with that uri with this block
         public IActionResult GetCity(int id)
         {   //This method fetchs the related data to the Id number that is requested 
+
             var cityToReturn = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id);
             // This creates a variable of City Id requested by using lambda expression
             if (cityToReturn == null)

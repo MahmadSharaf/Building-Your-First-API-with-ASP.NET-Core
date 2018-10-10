@@ -11,15 +11,10 @@ namespace CityInfo.API.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public int NumberOfPointsOfInterests {
-            get
-            {
-                return PointsOfInterests.Count;
-            }               
-        }
+       // public int NumberOfPointsOfInterest { get; set; }
 
-        public ICollection<PointsOfInterestsDto> PointsOfInterests { get; set; }
-        = new List<PointsOfInterestsDto>(); // Initialize PointsOfInterestsDto as it cannot be null.
-                                            // Typically it should be done in constructor but C# auto-init property can be used instead
+        
+
+        
     }
 }
