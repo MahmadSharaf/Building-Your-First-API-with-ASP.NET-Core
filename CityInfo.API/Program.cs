@@ -12,7 +12,7 @@ namespace CityInfo.API
 {
     public class Program
     {
-       // This for ASP.NET Core v2 the same as for v1 but with extra featues 
+       // This for ASP.NET Core v2 the same as for v1 but with extra features 
         // Default files and variables for configurational setup as 
         public static void Main(string[] args) //This is responsible for running and configuring the application
         {
