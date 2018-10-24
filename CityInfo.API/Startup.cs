@@ -81,9 +81,10 @@ namespace CityInfo.API
             var connectionString = Startup.Configuration["connectionStrings:cityInfoDBConnectionString"];
 
             services.AddDbContext<CityInfoContext>(o => o.UseSqlServer(connectionString)); //Injecting DB context in startup services
-            // This now registered with our DB and connected
-            //todo///////////////////////////////////////////////////////
-            
+                                                                                           // This now registered with our DB and connected
+                                                                                           //todo///////////////////////////////////////////////////////
+
+            services.AddScoped<ICityInfoRepository, CityInfoRepository>();
         }
 
         //todo ******************************************************************************************
