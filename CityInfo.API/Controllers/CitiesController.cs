@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc; //Controller
+﻿using CityInfo.API.Models;
+using CityInfo.API.Services;
+using Microsoft.AspNetCore.Mvc; //Controller
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,22 +12,93 @@ namespace CityInfo.API.Controllers
     public class CitiesController : Controller
     {//This class is a Cities controller class responsible for routing URLs with the corresponding codes
 
-        [HttpGet("{id}")] //The routing template. This can connects a request with that uri with this block
-        public IActionResult GetCity(int id)
+        private ICityInfoRepository _cityInfoRepository;
+
+        public CitiesController(ICityInfoRepository cityInfoRepository)
+        {
+            _cityInfoRepository = cityInfoRepository;
+        }
+
+        [HttpGet("{cityId}")] //The routing template. This can connects a request with that uri with this block
+        public IActionResult GetCity(int cityId, bool includePOI=false)
         {   //This method fetches the related data to the Id number that is requested 
 
-            var cityToReturn = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id);
-            // This creates a variable of City Id requested by using lambda expression
+            var cityToReturn = _cityInfoRepository.GetCity(cityId, includePOI);
+
             if (cityToReturn == null)
             {// If no data related to the requested city Id number
+
                 return NotFound(); // 404 status code returns
             }
-            return Ok(cityToReturn);
+
+
+            if (includePOI)
+            {
+                var cityResult = new CityDto()
+                {
+                    Id = cityToReturn.Id,
+                    Name = cityToReturn.Name,
+                    Description = cityToReturn.Description
+                };
+
+                foreach (var item in cityToReturn.PointsOfInterest)
+                {
+                    cityResult.PointsOfInterest.Add(new PointsOfInterestsDto()
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Description = item.Description
+                    });
+                }
+
+                return Ok(cityResult);
+            }
+            else
+            {
+                var cityResult = new CityWithoutPOIDto()
+                {
+                    Id = cityToReturn.Id,
+                    Name = cityToReturn.Name,
+                    Description = cityToReturn.Description
+                };
+
+                return Ok(cityResult);
+            }
+                
+
+            
+
+            //x var cityToReturn = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id);
+            //x // This creates a variable of City Id requested by using lambda expression
+            //x if (cityToReturn == null)
+            //x {
+            //x     // If no data related to the requested city Id number
+            //x     return NotFound(); // 404 status code returns
+            //x }
+            //x return Ok(cityToReturn);
         }
+
+
 
         public IActionResult GetCities()
         {
-            return Ok(CitiesDataStore.Current.Cities);
+            var cityEntities = _cityInfoRepository.GetCities();
+            // cityEntities are not the action in the API should return. So mapping should occur.
+
+            var results = new List<CityWithoutPOIDto>();
+
+            foreach (var cityEntity in cityEntities)
+            {
+                results.Add(new CityWithoutPOIDto
+                {
+                    Id = cityEntity.Id,
+                    Description = cityEntity.Description,
+                    Name = cityEntity.Name
+                });
+            }
+            return Ok(results);
+
+            //x return Ok(CitiesDataStore.Current.Cities);
 
 
             //todo ************* unneeded code ***************//
