@@ -1,0 +1,15 @@
+﻿Level 200 Success:
+200 - OK
+201 - Created
+204 - No Content 'like a delete'
+
+
+Level 400 Client Error:
+400 - Bad Request :'The consumer of the API sent to the server is wrong' "The JSON provided can't be parsed"
+401 - Unauthorized:'No or invalid authentication details were provided.
+403 - Forbidden	  :'The authentication succeeded, but the authentication user does not have access to the requested resource'
+404 - Not Found   :'The requested resource doesn't exist'.
+409 - Conflict    :'An edit conflict between two simultaneous updates'.
+
+Level 500 Server Error:
+500 - Internal Server Error: The server made a mistake, and the client can't do anything about it other than try again later.

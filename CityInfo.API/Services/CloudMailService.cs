@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CityInfo.API.Controllers
+namespace CityInfo.API.Services
 {
     public class CloudMailService: IMailService
     {

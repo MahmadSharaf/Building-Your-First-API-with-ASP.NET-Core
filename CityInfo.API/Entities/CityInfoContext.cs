@@ -11,8 +11,8 @@ namespace CityInfo.API.Entities
         public CityInfoContext(DbContextOptions<CityInfoContext> options)
             :base(options)
         {
-            Database.Migrate();
-            //Database.EnsureCreated(); // This call insures the DB created effictively
+            Database.Migrate(); // This make sure of none existing DB to initial version to upcoming versions after that. So this is the best approach.
+            //Database.EnsureCreated(); // This call insures the DB created effectively
         }
     
         public DbSet<City> Cities { get; set; }

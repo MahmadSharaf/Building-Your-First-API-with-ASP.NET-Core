@@ -10,7 +10,7 @@ namespace CityInfo.API.Entities
     public class City
     {
         [Key] // Makes Id the primary key
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] //Makes Id proprty values, generated automatically on add.
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] //Makes Id property values, generated automatically on add.
                                                               // It has three possible values:
                                                               // 1-None: for no generation
                                                               // 2-Identity: for generation on add

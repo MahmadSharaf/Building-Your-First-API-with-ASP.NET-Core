@@ -14,14 +14,17 @@ namespace CityInfo.API.Controllers
     public class PointsOfInterestsController : Controller
     {//This class is a Points Of Interests controller class which is responsible for routing URLs with the corresponding codes
 
-        private ILogger<PointsOfInterestsController> _logger;
+        //! ILoggerFactory can be requested and create a logger, but there is another approach. 
+        //! The container can also directly provide an ILogger<T> instance, when this technique is used, 
+        //! the logger will automatically use the type's name as its category name.
+        private ILogger<PointsOfInterestsController> _logger; 
         private IMailService _mailService; // Setting the instance
 
         public PointsOfInterestsController(ILogger<PointsOfInterestsController> logger,
             IMailService mailService)
         {
             _mailService = mailService; // inject instance in the constructor
-            _logger = logger;
+            _logger = logger;           // Create an instance of the ILogger
         }
 
         [HttpGet("{cityId}/pointsofinterest")]
@@ -29,13 +32,13 @@ namespace CityInfo.API.Controllers
         {
             try
             {
-               // throw new Exception("Exception sample");
+                //throw new Exception("Exception sample");
 
                 var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
                 if (city == null)
                 {
-                    
-                    _logger.LogInformation($"City with id {cityId} could't be found when accessing points of interest.");
+                    // This logs with an information message
+                    _logger.LogInformation($"City with id {cityId} couldn't be found when accessing points of interest.");
                     return NotFound();
                 }
                 return Ok(city.PointsOfInterest);
@@ -49,7 +52,7 @@ namespace CityInfo.API.Controllers
            
         }
 
-        [HttpGet("{cityId}/pointsofinterest/{id}")]
+        [HttpGet("{cityId}/pointsofinterest/{id}", Name = "GetPointOfInterest")]
         public IActionResult GetPointOfInterest(int cityId, int Id)
         {
             var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
@@ -66,21 +69,25 @@ namespace CityInfo.API.Controllers
             return Ok(pointOfInterest);
         }
 
-        [HttpPost("{cityId}/pointsofinterest", Name = "GetPointOfInterest")] //updates the entity with requested 
+        [HttpPost("{cityId}/pointsofinterest")] //updates the entity with requested 
         public IActionResult CreatePointOfInterest(int cityId,
             [FromBody] PointOfInterestsForCreationDto pointOfInterest)//This fetches the point of interest data and then deserialize it to PointOfInterestsForCreationDto
         {
+            //Check if the sent data is null
             if (pointOfInterest == null)
-            {//Check if the sent data is not null
+            {
                 return BadRequest();
             }
 
             var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+
+            //check if the City Id in the data sent is not null
             if (city == null)
-            {//check if the City Id in the sent data is not null
+            {
                 return NotFound();
             }
 
+            //A custom model state validation check. This checks if the Name and the Description are equal.
             if (pointOfInterest.Name == pointOfInterest.Description)
             {
                 ModelState.AddModelError("Description", "Description and name should not be the same.");
@@ -88,9 +95,10 @@ namespace CityInfo.API.Controllers
 
             //Model State is a dictionary, it contains both the state of the model, and model-binding validation. 
             //It represents a collection of name and value pairs that were submitted to API, one for each property
-            //It also contains a collection of error messages. Whenever a request come in the rules that is applied in the DTO, are checked
+            //It also contains a collection of error messages for each value submitted.
+            //Whenever a request come in the rules that is applied in the DTO, are checked
             if (!ModelState.IsValid)
-            {//Check if the validations are satisfied
+            {//Check if the validations are not satisfied
                 return BadRequest(ModelState);
             }
 
@@ -107,13 +115,14 @@ namespace CityInfo.API.Controllers
 
             city.PointsOfInterest.Add(finalPointOfInterest);
 
+            // This allows to return a response with a location header that contains the URI where the newly-created point of interest can be found.  
             return CreatedAtRoute("GetPointOfInterest", new
             { cityId = cityId, id = finalPointOfInterest.Id }, finalPointOfInterest);
         }
 
 
-        // All fields should be send as HttpPut updates all the fields data, so if a field is not send, 
-        //it will be its default value which is the inputted object
+        // All property fields should be send with request body, as HttpPut updates all the fields data.If a property field is not send, 
+        //it will be set as its default value which is most probably null
         [HttpPut("{cityId}/pointsofinterest/{id}")]
         public IActionResult UpdatePointOfInterest(int cityId, int id,
             [FromBody] PointOfInterestForUpdateDto pointOfInterest)
@@ -128,35 +137,37 @@ namespace CityInfo.API.Controllers
                 ModelState.AddModelError("Description", "Description and name should not be the same.");
             }
 
-            var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
-            if (city == null)
-            {
-                return NotFound();
-            }
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+
+            if (city == null)
+            {
+                return NotFound();
+            }
+
             var pointOfInterestFromStore = city.PointsOfInterest.FirstOrDefault(p => p.Id == id);
+
             if (pointOfInterestFromStore == null)
             {
                 return NotFound();
             }
 
-
+            // Apply the data received from the request to the datastore
             pointOfInterestFromStore.Name = pointOfInterest.Name;
             pointOfInterestFromStore.Description = pointOfInterest.Description;
 
-            return NoContent(); // This means the request procceded successfully but there is nothing to return
+            return NoContent(); // This means the request proceeded successfully but there is nothing to return
         }
 
         [HttpPatch("{cityId}/pointsofinterest/{id}")]
         public IActionResult PartialUpdatePointOfInterest(int cityId, int id,
             [FromBody] JsonPatchDocument<PointOfInterestForUpdateDto> patchDoc)
        //JsonPatchDocument can take either PointsOfInterestDto or PointOfInterestForUpdateDto:
-        //*If PointsOfInterestDto is chosen then a validation check that gurantees the id is not changed
+        //*If PointsOfInterestDto is chosen then an extra validation check that guarantees the id is not changed, is needed.
         //*If PointOfInterestForUpdateDto is chosen, it already has the validation annotations and does not have the ID
         // but the point of interest in this class has to mapped to the point of interest DTO before applying the patch.
         {
@@ -177,6 +188,7 @@ namespace CityInfo.API.Controllers
                 return NotFound();
             }
 
+            // Creating an instance of PointOfInterestForUpdateDto with the values available in the datastore which is fetched by pointOfInterestFromStore
             var pointOfInterestToPatch =
                 new PointOfInterestForUpdateDto()
                 {
@@ -188,7 +200,7 @@ namespace CityInfo.API.Controllers
             patchDoc.ApplyTo(pointOfInterestToPatch, ModelState);
 
             if (!ModelState.IsValid)
-            {//Check for the validation
+            {//Check for the validation for the patch document 
                 return BadRequest(ModelState);
             }
 
@@ -197,13 +209,15 @@ namespace CityInfo.API.Controllers
                 ModelState.AddModelError("Description", "Description and name should not be the same.");
             }
 
+            //This triggers validations for this models. If any errors it will end in the model state
             TryValidateModel(pointOfInterestToPatch);
 
             if (!ModelState.IsValid)
-            {//Check for the validation
+            {//Check for the validation for the poi in PointOfInterestForUpdateDto is still valid
                 return BadRequest(ModelState);
             }
 
+            //Applying the data to the datastore property fields
             pointOfInterestFromStore.Name = pointOfInterestToPatch.Name;
             pointOfInterestFromStore.Description = pointOfInterestToPatch.Description;
 

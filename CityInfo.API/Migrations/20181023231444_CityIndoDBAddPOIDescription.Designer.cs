@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CityInfo.API.Migrations
 {
     [DbContext(typeof(CityInfoContext))]
-    [Migration("20181010215537_CityInfoDbAddPointOfIntersetDescription")]
-    partial class CityInfoDbAddPointOfIntersetDescription
+    [Migration("20181023231444_CityIndoDBAddPOIDescription")]
+    partial class CityIndoDBAddPOIDescription
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -13,9 +13,8 @@ namespace CityInfo.API
 
         public CitiesDataStore()
         {
-            // init dummy data
             Cities = new List<CityDto>()
-            {//This Class contains the actual data 
+            {
                 new CityDto()
                 {
                     Id=1,
@@ -33,7 +32,7 @@ namespace CityInfo.API
                         {
                             Id = 2,
                             Name = "Empire State Building",
-                            Description = "A 102-story skyscraper locayed in Midtown Manhattan."
+                            Description = "A 102-story skyscraper located in Midtown Manhattan."
                         }
                     }
                 },
