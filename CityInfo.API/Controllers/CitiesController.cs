@@ -1,4 +1,5 @@
-﻿using CityInfo.API.Models;
+﻿using AutoMapper;
+using CityInfo.API.Models;
 using CityInfo.API.Services;
 using Microsoft.AspNetCore.Mvc; //Controller
 using System;
@@ -19,6 +20,9 @@ namespace CityInfo.API.Controllers
             _cityInfoRepository = cityInfoRepository;
         }
 
+
+
+
         [HttpGet("{cityId}")] //The routing template. This can connects a request with that uri with this block
         public IActionResult GetCity(int cityId, bool includePOI=false)
         {   //This method fetches the related data to the Id number that is requested 
@@ -31,42 +35,59 @@ namespace CityInfo.API.Controllers
                 return NotFound(); // 404 status code returns
             }
 
-
             if (includePOI)
             {
-                var cityResult = new CityDto()
-                {
-                    Id = cityToReturn.Id,
-                    Name = cityToReturn.Name,
-                    Description = cityToReturn.Description
-                };
-
-                foreach (var item in cityToReturn.PointsOfInterest)
-                {
-                    cityResult.PointsOfInterest.Add(new PointsOfInterestsDto()
-                    {
-                        Id = item.Id,
-                        Name = item.Name,
-                        Description = item.Description
-                    });
-                }
+                var cityResult = Mapper.Map<CityDto>(cityToReturn);
 
                 return Ok(cityResult);
             }
+
             else
             {
-                var cityResult = new CityWithoutPOIDto()
-                {
-                    Id = cityToReturn.Id,
-                    Name = cityToReturn.Name,
-                    Description = cityToReturn.Description
-                };
+                var cityResult = Mapper.Map<CityWithoutPOIDto>(cityToReturn);
 
                 return Ok(cityResult);
             }
-                
 
-            
+
+
+            //todo manual mapping            
+
+            //x if (includePOI)
+            //x {
+            //x     var cityResult = new CityDto()
+            //x     {
+            //x         Id = cityToReturn.Id,
+            //x         Name = cityToReturn.Name,
+            //x         Description = cityToReturn.Description
+            //x     };
+            //x 
+            //x     foreach (var item in cityToReturn.PointsOfInterest)
+            //x     {
+            //x         cityResult.PointsOfInterest.Add(new PointsOfInterestsDto()
+            //x         {
+            //x             Id = item.Id,
+            //x             Name = item.Name,
+            //x             Description = item.Description
+            //x         });
+            //x     }
+            //x 
+            //x     return Ok(cityResult);
+            //x }
+            //x else
+            //x {
+            //x     var cityResult = new CityWithoutPOIDto()
+            //x     {
+            //x         Id = cityToReturn.Id,
+            //x         Name = cityToReturn.Name,
+            //x         Description = cityToReturn.Description
+            //x     };
+            //x 
+            //x     return Ok(cityResult);
+            //x }
+
+
+
 
             //x var cityToReturn = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == id);
             //x // This creates a variable of City Id requested by using lambda expression
@@ -83,20 +104,32 @@ namespace CityInfo.API.Controllers
         public IActionResult GetCities()
         {
             var cityEntities = _cityInfoRepository.GetCities();
-            // cityEntities are not the action in the API should return. So mapping should occur.
+            //! cityEntities are not the action in the API should return. So mapping should occur.
 
-            var results = new List<CityWithoutPOIDto>();
+            var results = Mapper.Map<IEnumerable<CityWithoutPOIDto>>(cityEntities);
 
-            foreach (var cityEntity in cityEntities)
-            {
-                results.Add(new CityWithoutPOIDto
-                {
-                    Id = cityEntity.Id,
-                    Description = cityEntity.Description,
-                    Name = cityEntity.Name
-                });
-            }
             return Ok(results);
+
+
+
+
+
+
+
+
+            //todo Manual mapping
+            //x var results = new List<CityWithoutPOIDto>();
+                
+            //x foreach (var cityEntity in cityEntities)
+            //x {
+            //x     results.Add(new CityWithoutPOIDto
+            //x     {
+            //x         Id = cityEntity.Id,
+            //x         Description = cityEntity.Description,
+            //x         Name = cityEntity.Name
+            //x     });
+            //x }
+            //x return Ok(results);
 
             //x return Ok(CitiesDataStore.Current.Cities);
 

@@ -128,6 +128,18 @@ namespace CityInfo.API
             app.UseStatusCodePages();
             //todo////////////////////////////////////////////////////
 
+            //todo*************  Auto Mapper   *********************!//
+            AutoMapper.Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Entities.City, Models.CityWithoutPOIDto>();
+                cfg.CreateMap<Entities.City, Models.CityDto>();
+                cfg.CreateMap<Entities.PointsOfInterest, Models.PointsOfInterestsDto>();
+                cfg.CreateMap<Models.PointOfInterestsForCreationDto, Entities.PointsOfInterest>();
+                cfg.CreateMap<Models.PointOfInterestForUpdateDto, Entities.PointsOfInterest>();
+                cfg.CreateMap<Entities.PointsOfInterest, Models.PointOfInterestForUpdateDto>();
+            });
+            //todo////////////////////////////////////////////////////
+
             //todo*************  M   V   C   *********************!//
             //! Added to the request pipeline, after exceptions are handled. So then
             //! MVC will handle http requests

@@ -11,15 +11,16 @@ namespace CityInfo.API.Entities
     {
         [Key] // Makes Id the primary key
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] //Makes Id property values, generated automatically on add.
-                                                              // It has three possible values:
+        public int Id { get; set; }                           // It has three possible values:
                                                               // 1-None: for no generation
                                                               // 2-Identity: for generation on add
                                                               // 3-Computed: for generation on add or update
-        public int Id { get; set; }
+        
+
         [Required]
         [MaxLength(50)]
         public string Name { get; set; }
-        [Required]
+
         [MaxLength(200)]
         public string Description { get; set; }
 

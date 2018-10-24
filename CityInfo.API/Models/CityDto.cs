@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CityInfo.API.Models
-{   //! What is returned from or accepted bu an API is not the same as the entities used by the underlying datastore.
+{   //! What is returned from or accepted by an API is not the same as the entities used by the underlying datastore.
     public class CityDto
     {
         //public List<PointsOfInterestsDto> PointsOfInterest;
